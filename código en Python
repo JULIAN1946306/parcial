@@ -1,0 +1,85 @@
+#codigo python parcial
+"""
+Simulador del Sistema de Escudo del Doom Slayer
+
+Este programa simula el comportamiento del escudo del Doom Slayer frente a
+diferentes tipos de ataques demoníacos, calculando el daño recibido, el estado
+final del escudo y la activación de habilidades especiales.
+"""
+
+
+def procesar_ataque(escudo, daño, tipo_ataque):
+    """
+    Procesa un ataque contra el escudo del Doom Slayer.
+
+    Args:
+        escudo (int): Nivel actual del escudo.
+        daño (int): Cantidad de daño del ataque.
+        tipo_ataque (int): Tipo de ataque (1: plasma, 2: fuego infernal, otros: normal).
+
+    Returns:
+        tuple: (daño_final, escudo_restante, efectos)
+            - daño_final (float): Daño después de aplicar efectos.
+            - escudo_restante (int): Escudo restante después del ataque.
+            - efectos (list): Lista de efectos activados.
+    """
+    daño_final = daño
+    efectos = []
+
+    # Caso 1: Sobrecarga de escudo con ataque de plasma
+    if escudo > 70 and tipo_ataque == 1:
+        daño_final = daño * 1.5  # Aumentamos el daño en 50% por sobrecarga
+        efectos.append("¡Sobrecarga de escudo! Daño aumentado.")
+
+    # Caso 2: Protección demoníaca con ataque de fuego infernal
+    elif escudo < 30 and tipo_ataque == 2:
+        daño_final = daño * 0.6  # Reducimos el daño en 40%
+        efectos.append("¡Protección infernal activada! Daño reducido.")
+
+    # Calculamos el escudo restante
+    escudo_restante = max(0, escudo - daño_final)
+
+    # Caso 3: Modo de ira cuando el escudo llega a 0
+    if escudo_restante == 0 and escudo > 0:
+        efectos.append("¡Modo de ira activado! El siguiente ataque será más fuerte.")
+
+    return daño_final, escudo_restante, efectos
+
+
+def main():
+    """
+    Función principal que maneja la entrada/salida y ejecuta la simulación.
+    """
+    try:
+        while True:
+            try:
+                entrada = input()
+                if not entrada:
+                    break
+
+                partes = entrada.strip().split()
+                if len(partes) != 3:
+                    print("Entrada inválida. Se requieren tres valores: Escudo, Daño, Tipo de ataque")
+                    continue
+
+                escudo = int(partes[0])
+                daño = int(partes[1])
+                tipo_ataque = int(partes[2])
+
+                daño_final, escudo_restante, efectos = procesar_ataque(escudo, daño, tipo_ataque)
+
+                print(f"Daño recibido: {daño_final}")
+                print(f"Escudo restante: {escudo_restante}")
+
+                for efecto in efectos:
+                    print(efecto)
+
+            except ValueError:
+                print("Entrada inválida. Los valores deben ser números enteros.")
+
+    except EOFError:
+        pass
+
+
+if __name__ == "__main__":
+    main()
